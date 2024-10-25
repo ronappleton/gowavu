@@ -1,40 +1,32 @@
-name: Create Release
+name: Release Tagging
+
+permissions:
+  contents: write
+  pull-requests: read
 
 on:
   push:
     branches:
       - master
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
-  release:
+  release-on-push:
     runs-on: ubuntu-latest
-
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Git user
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-      - name: Create Tag
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: |
-          TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
-          git tag $TAG_NAME
-          git push https://x-access-token:${NPM_TOKEN}@github.com/ronappleton/gowavu.git $TAG_NAME
-
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - id: release
+        uses: rymndhng/release-on-push-action@master
         with:
-          tag_name: ${{ steps.create_tag.outputs.TAG_NAME }}
-          release_name: Release ${{ steps.create_tag.outputs.TAG_NAME }}
-          body: |
-            Release notes for tag ${{ steps.create_tag.outputs.TAG_NAME }}
-          draft: false
-          prerelease: false
+          bump_version_scheme: patch
+          tag_prefix: v
+
+      - name: Check Output Parameters
+        run: |
+          echo "Got tag name ${{ steps.release.outputs.tag_name }}"
+          echo "Got release version ${{ steps.release.outputs.version }}"
+          echo "Upload release artifacts to ${{ steps.release.outputs.upload_url }}"
