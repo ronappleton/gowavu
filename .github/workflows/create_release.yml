@@ -13,15 +13,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Create Tag
+        run: |
+          TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
+
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.NPM_TOKEN }}
         with:
-          tag_name: ${{ github.sha }}
-          release_name: Release ${{ github.sha }}
+          tag_name: ${{ steps.create_tag.outputs.TAG_NAME }}
+          release_name: Release ${{ steps.create_tag.outputs.TAG_NAME }}
           body: |
-            Release notes for commit ${{ github.sha }}
+            Release notes for tag ${{ steps.create_tag.outputs.TAG_NAME }}
           draft: false
           prerelease: false
