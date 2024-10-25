@@ -14,16 +14,7 @@ module.exports = {
             },
         ],
     ],
-    "devDependencies": {
-        "semantic-release": "^19.0.0",
-        "@semantic-release/changelog": "^6.0.0",
-        "@semantic-release/git": "^10.0.0",
-        "@semantic-release/github": "^8.0.0",
-        "@semantic-release/commit-analyzer": "^9.0.0",
-        "@semantic-release/release-notes-generator": "^10.0.0",
-        "@semantic-release/npm": "^8.0.0"
-    },
     "engines": {
-        "node": ">=16.0.0"
+        "node": ">=20.0.0"
     }
 };
