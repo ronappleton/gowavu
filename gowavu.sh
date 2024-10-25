@@ -53,12 +53,12 @@ function check_for_updates {
 function move_script {
     if [[ ! $(realpath "$0") == "/usr/local/bin/gowavu" ]]; then
         echo "Moving script to /usr/local/bin..."
-        mv "$0" /usr/local/bin/gowavu
+        sudo mv "$0" /usr/local/bin/gowavu
         if [[ $? -ne 0 ]]; then
             echo "Failed to move the script. Please check permissions."
             exit 1
         fi
-        chmod +x /usr/local/bin/gowavu
+        sudo chmod +x /usr/local/bin/gowavu
         echo "Script moved successfully. Re-running setup..."
         exec /usr/local/bin/gowavu setup
     fi
@@ -83,83 +83,95 @@ function go_check {
 }
 
 # Function to install Go
-function install_go {
-    read -p "Enter the Go version you want to install (default: 1.21.1): " go_version
-    go_version=${go_version:-1.21.1}
-    echo "Installing Go version $go_version..."
-    wget "https://golang.org/dl/go${go_version}.linux-amd64.tar.gz" -O /tmp/go.tar.gz
-    tar -C /usr/local -xzf /tmp/go.tar.gz
-    rm /tmp/go.tar.gz
-    export PATH=$PATH:/usr/local/go/bin
-    echo "Go $go_version installed successfully."
-}
+if ! declare -f install_go > /dev/null; then
+    function install_go {
+        read -p "Enter the Go version you want to install (default: 1.21.1): " go_version
+        go_version=${go_version:-1.21.1}
+        echo "Installing Go version $go_version..."
+        wget "https://golang.org/dl/go${go_version}.linux-amd64.tar.gz" -O /tmp/go.tar.gz
+        sudo tar -C /usr/local -xzf /tmp/go.tar.gz
+        rm /tmp/go.tar.gz
+        export PATH=$PATH:/usr/local/go/bin
+        echo "Go $go_version installed successfully."
+    }
+fi
 
 # Function to install Node.js
-function install_node {
-    echo "Installing Node.js..."
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-    apt-get install -y nodejs
-    echo "Node.js installed successfully."
-}
+if ! declare -f install_node > /dev/null; then
+    function install_node {
+        echo "Installing Node.js..."
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
+        sudo apt-get install -y nodejs
+        echo "Node.js installed successfully."
+    }
+fi
 
 # Function to install pnpm
-function install_pnpm {
-    echo "Installing pnpm..."
-    npm install -g pnpm
-    pnpm setup
-    echo "pnpm installed successfully."
-}
+if ! declare -f install_pnpm > /dev/null; then
+    function install_pnpm {
+        echo "Installing pnpm..."
+        npm install -g pnpm
+        pnpm setup
+        echo "pnpm installed successfully."
+    }
+fi
 
 # Function to install Wails
-function install_wails {
-    echo "Installing Wails..."
-    go install github.com/wailsapp/wails/v2/cmd/wails@latest
-    echo "Wails installed successfully."
-}
+if ! declare -f install_wails > /dev/null; then
+    function install_wails {
+        echo "Installing Wails..."
+        go install github.com/wailsapp/wails/v2/cmd/wails@latest
+        echo "Wails installed successfully."
+    }
+fi
 
 # Function to setup GOPATH
-function setup_gopath {
-    if [[ -z "$GOPATH" ]]; then
-        read -p "Enter the GOPATH you want to set (default: $HOME/go): " gopath
-        gopath=${gopath:-$HOME/go}
-        mkdir -p "$gopath"
-        echo "export GOPATH=$gopath" >> ~/.bashrc
-        echo "export PATH=\$PATH:\$GOPATH/bin" >> ~/.bashrc
-        echo "GOPATH set to $gopath."
-    fi
-}
+if ! declare -f setup_gopath > /dev/null; then
+    function setup_gopath {
+        if [[ -z "$GOPATH" ]]; then
+            read -p "Enter the GOPATH you want to set (default: $HOME/go): " gopath
+            gopath=${gopath:-$HOME/go}
+            mkdir -p "$gopath"
+            echo "export GOPATH=$gopath" >> ~/.bashrc
+            echo "export PATH=\$PATH:\$GOPATH/bin" >> ~/.bashrc
+            echo "GOPATH set to $gopath."
+        fi
+    }
+fi
 
 # Function to create a new Wails project
-function create_project {
-    if [[ -z "$1" ]]; then
-        echo "Please provide a project name."
-        return 1
-    fi
+if ! declare -f create_project > /dev/null; then
+    function create_project {
+        if [[ -z "$1" ]]; then
+            echo "Please provide a project name."
+            return 1
+        fi
 
-    project_name=$1
-    echo "Creating a new Wails project with Vue and TypeScript..."
-    wails init -n "$project_name" -t vue
+        project_name=$1
+        echo "Creating a new Wails project with Vue and TypeScript..."
+        wails init -n "$project_name" -t vue
 
-    # Open the project in GoLand
-    if command_exists goland; then
-        goland "$project_name" &
-    else
-        echo "GoLand not found. Please open the project manually."
-    fi
-}
+        # Open the project in GoLand
+        if command_exists goland; then
+            goland "$project_name" &
+        else
+            echo "GoLand not found. Please open the project manually."
+        fi
+    }
+fi
 
 # Function to build the application for all platforms
-function build_app {
-    echo "Building the application for all platforms..."
-    wails build
-}
+if ! declare -f build_app > /dev/null; then
+    function build_app {
+        echo "Building the application for all platforms..."
+        wails build
+    }
+fi
 
 # Main script execution
-check_root
-move_script
-
 case "$1" in
     setup)
+        check_root
         read -pr "Enter the Go version you want to install (default: 1.21.1): " go_version
         go_version=${go_version:-1.21.1}
 
@@ -206,6 +218,7 @@ case "$1" in
         fi
         ;;
     update)
+        check_root
         check_for_updates
         ;;
     help)
