@@ -14,4 +14,7 @@ module.exports = {
             },
         ],
     ],
+    "engines" : {
+        "node" : ">= 16.0.0"
+    }
 };
