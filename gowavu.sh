@@ -9,7 +9,7 @@ set -e
 # Move the script to /usr/local/bin if not already there
 if [[ ! $(realpath "$0") == "/usr/local/bin/gowavu" ]]; then
     echo "Moving script to /usr/local/bin..."
-    sudo mv -f "$0" /usr/local/bin/gowavu
+    sudo mv -f "$(realpath "$0")" /usr/local/bin/gowavu
     if [[ $? -ne 0 ]]; then
         echo "Failed to move the script. Please check permissions."
         exit 1
