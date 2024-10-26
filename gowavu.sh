@@ -85,7 +85,7 @@ function go_check {
 # Function to install Go
 if ! declare -f install_go > /dev/null; then
     function install_go {
-        read -pr "Enter the Go version you want to install (default: 1.21.1): " go_version
+        read -p "Enter the Go version you want to install (default: 1.21.1): " go_version
         go_version=${go_version:-1.21.1}
         echo "Installing Go version $go_version..."
         wget "https://golang.org/dl/go${go_version}.linux-amd64.tar.gz" -O /tmp/go.tar.gz
@@ -172,7 +172,7 @@ fi
 case "$1" in
     setup)
         check_root
-        read -pr "Enter the Go version you want to install (default: 1.21.1): " go_version
+        read -p "Enter the Go version you want to install (default: 1.21.1): " go_version
         go_version=${go_version:-1.21.1}
 
         if go_check "$go_version"; then
