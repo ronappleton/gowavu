@@ -169,8 +169,10 @@ if ! declare -f build_app > /dev/null; then
 fi
 
 # Main script execution
+echo "Starting gowavu script..."
 case "$1" in
     setup)
+        echo "Running setup..."
         check_root
         read -p "Enter the Go version you want to install (default: 1.21.1): " go_version
         go_version=${go_version:-1.21.1}
@@ -204,6 +206,7 @@ case "$1" in
         echo "Setup completed successfully."
         ;;
     new)
+        echo "Creating new project..."
         if command_exists wails; then
             create_project "$2"
         else
@@ -211,6 +214,7 @@ case "$1" in
         fi
         ;;
     build)
+        echo "Building application..."
         if command_exists wails; then
             build_app
         else
@@ -218,6 +222,7 @@ case "$1" in
         fi
         ;;
     update)
+        echo "Checking for updates..."
         check_root
         check_for_updates
         ;;
