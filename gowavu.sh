@@ -94,6 +94,20 @@ if ! declare -f install_go > /dev/null; then
     }
 fi
 
+# Function to update Go
+if ! declare -f update_go > /dev/null; then
+    function update_go {
+        read -p "Enter the Go version you want to update to (default: 1.21.1): " go_version
+        go_version=${go_version:-1.21.1}
+        echo "Updating Go to version $go_version..."
+        wget "https://golang.org/dl/go${go_version}.linux-amd64.tar.gz" -O /tmp/go.tar.gz
+        sudo tar -C /usr/local -xzf /tmp/go.tar.gz
+        rm /tmp/go.tar.gz
+        export PATH=$PATH:/usr/local/go/bin
+        echo "Go updated to version $go_version successfully."
+    }
+fi
+
 # Function to install Node.js
 if ! declare -f install_node > /dev/null; then
     function install_node {
