@@ -65,7 +65,8 @@ function check_for_updates {
 # Function to check Go installation
 function go_check {
     desired_version=${1:-1.21.1}
-    if command_exists go; then
+    gocommand="go version"
+    if command_exists $gocommand; then
         installed_version=$(go version | awk '{print $3}' | sed 's/go//')
         if [[ "$installed_version" == "$desired_version" ]]; then
             echo "Go version $installed_version is already installed."
