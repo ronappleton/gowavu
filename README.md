@@ -7,7 +7,7 @@ A script to set up Go, Node.js, pnpm, and Wails for building cross-platform desk
 To download and run the script in a one-liner, use the following command:
 
 ```sh
-curl -s https://raw.githubusercontent.com/ronappleton/gowavu/master/gowavu.sh | sudo bash -s setup
+curl -s https://raw.githubusercontent.com/ronappleton/gowavu/master/gowavu.sh -o /tmp/gowavu.sh && sudo mv /tmp/gowavu.sh /usr/local/bin/gowavu && sudo chmod +x /usr/local/bin/gowavu && /usr/local/bin/gowavu setup
 ```
 
 ## Usage
