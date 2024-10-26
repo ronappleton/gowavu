@@ -6,6 +6,19 @@
 
 set -e
 
+# Move the script to /usr/local/bin if not already there
+if [[ ! $(realpath "$0") == "/usr/local/bin/gowavu" ]]; then
+    echo "Moving script to /usr/local/bin..."
+    sudo mv -f "$0" /usr/local/bin/gowavu
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to move the script. Please check permissions."
+        exit 1
+    fi
+    sudo chmod +x /usr/local/bin/gowavu
+    echo "Script moved successfully. Re-running from /usr/local/bin..."
+    exec /usr/local/bin/gowavu "$@"
+fi
+
 # Function to display help message
 function show_help {
     echo "Usage: gowavu [command] [options]"
@@ -46,21 +59,6 @@ function check_for_updates {
         exit 0
     else
         echo "You are using the latest version ($current_version)."
-    fi
-}
-
-# Move the script to /usr/local/bin if not already there
-function move_script {
-    if [[ ! $(realpath "$0") == "/usr/local/bin/gowavu" ]]; then
-        echo "Moving script to /usr/local/bin..."
-        sudo mv "$0" /usr/local/bin/gowavu
-        if [[ $? -ne 0 ]]; then
-            echo "Failed to move the script. Please check permissions."
-            exit 1
-        fi
-        sudo chmod +x /usr/local/bin/gowavu
-        echo "Script moved successfully. Re-running setup..."
-        exec /usr/local/bin/gowavu setup
     fi
 }
 
